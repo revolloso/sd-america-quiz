@@ -1,0 +1,359 @@
+let logoutBtn, backHomeBtn, registerLink, loginForm, registerForm;
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize DOM elements
+    loginSection = document.querySelector('.login-section');
+    homeSection = document.querySelector('.home');
+    quizSection = document.querySelector('.quiz-section');
+    historySection = document.querySelector('.history-section');
+    startBtn = document.querySelector('.start-btn');
+    historyBtn = document.querySelector('.history-btn');
+    popupInfo = document.querySelector('.popup-info');
+    exitBtn = document.querySelector('.exit-btn');
+    main = document.querySelector('.main');
+    continueBtn = document.querySelector('.continue-btn');
+    quizBox = document.querySelector('.quiz-box');
+    resultBox = document.querySelector('.result-box');
+    tryAgainBtn = document.querySelector('.tryAgain-btn');
+    goHomeBtn = document.querySelector('.goHome-btn');
+    nextBtn = document.querySelector('.next-btn');
+    optionList = document.querySelector('.option-list');
+    logoutBtn = document.querySelector('.btnLogout-popup');
+    backHomeBtn = document.querySelector('.back-home-btn');
+    registerLink = document.querySelector('.register-link');
+    loginForm = document.getElementById('loginForm');
+    registerForm = document.getElementById('registerForm');
+
+    // Check user session
+    const user = localStorage.getItem('currentUser');
+    if (user) {
+        currentUser = JSON.parse(user);
+        showHome();
+    } else {
+        showLogin();
+    }
+
+    // Event Listeners
+    if (registerLink) {
+        registerLink.onclick = (e) => { e.preventDefault(); showRegister(); };
+    }
+
+    const closeModalBtn = document.getElementById('closeModal');
+    if (closeModalBtn) {
+        closeModalBtn.onclick = closeRegisterModal;
+    }
+
+    const modal = document.getElementById('registerModal');
+    if (modal) {
+        modal.onclick = (e) => {
+            if (e.target === modal) {
+                closeRegisterModal();
+            }
+        };
+    }
+
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            console.log('Login form submitted');
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            console.log('Attempting login with:', email);
+
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+                console.log('Login response:', data);
+
+                if (response.ok) {
+                    currentUser = data.user;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    showHome();
+                    loginForm.reset();
+                } else {
+                    alert(data.message || 'Login failed');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('Error connecting to server');
+            }
+        });
+    }
+
+    if (registerForm) {
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userData = {
+                email: document.getElementById('regEmail').value,
+                password: document.getElementById('regPassword').value,
+                nombre: document.getElementById('regNombre').value,
+                apellido_paterno: document.getElementById('regApellidoP').value,
+                apellido_materno: document.getElementById('regApellidoM').value,
+                empresa: document.getElementById('regEmpresa').value,
+                puesto: document.getElementById('regPuesto').value,
+                telefono: document.getElementById('regTelefono').value
+            };
+        });
+    }
+
+    if (logoutBtn) {
+        logoutBtn.onclick = () => {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            showLogin();
+        };
+    }
+
+    if (startBtn) {
+        startBtn.onclick = (e) => { 
+            if(e) e.preventDefault();
+            popupInfo.classList.add('active'); 
+            main.classList.add('active'); 
+        };
+    }
+
+    if (exitBtn) {
+        exitBtn.onclick = (e) => { 
+            if(e) e.preventDefault();
+            popupInfo.classList.remove('active'); 
+            main.classList.remove('active'); 
+        };
+    }
+
+    if (continueBtn) {
+        continueBtn.onclick = (e) => {
+            if(e) e.preventDefault();
+            quizSection.classList.add('active');
+            popupInfo.classList.remove('active');
+            main.classList.remove('active');
+            quizBox.classList.add('active');
+            homeSection.classList.remove('active');
+            if (goHomeBtn) goHomeBtn.disabled = true;
+            if (tryAgainBtn) tryAgainBtn.disabled = true;
+            questionCount = 0;
+            questionNumb = 1;
+            userScore = 0;
+            showQuestions(questionCount);
+            questionCounter(questionNumb);
+            headerScore();
+        };
+    }
+
+    if (tryAgainBtn) {
+        tryAgainBtn.onclick = () => {
+            quizBox.classList.add('active');
+            nextBtn.classList.remove('active');
+            resultBox.classList.remove('active');
+            questionCount = 0;
+            questionNumb = 1;
+            userScore = 0;
+            showQuestions(questionCount);
+            questionCounter(questionNumb);
+            headerScore();
+        };
+    }
+
+    if (goHomeBtn) {
+        goHomeBtn.onclick = () => {
+            quizSection.classList.remove('active');
+            nextBtn.classList.remove('active');
+            resultBox.classList.remove('active');
+            quizBox.classList.remove('active');
+            questionCount = 0;
+            questionNumb = 1;
+            userScore = 0;
+            showHome();
+        };
+    }
+
+    const viewHistoryBtn = document.querySelector('.view-history-btn');
+    if (viewHistoryBtn) {
+        viewHistoryBtn.onclick = () => {
+            quizSection.classList.remove('active');
+            resultBox.classList.remove('active');
+            quizBox.classList.remove('active');
+            showHistory();
+        };
+    }
+
+    if (nextBtn) {
+        nextBtn.onclick = () => {
+            if (questionCount < questions.length - 1) {
+                questionCount++;
+                showQuestions(questionCount);
+                questionNumb++;
+                questionCounter(questionNumb);
+                nextBtn.classList.remove('active');
+            } else {
+                showResultBox();
+            }
+        };
+    }
+
+    if (historyBtn) historyBtn.onclick = () => { showHistory(); };
+    if (backHomeBtn) backHomeBtn.onclick = () => { showHome(); };
+});
+
+function showLogin() {
+    hideAllSections();
+    if (loginSection) loginSection.classList.add('active');
+    if (logoutBtn) logoutBtn.style.display = 'none';
+    if (startBtn) startBtn.style.display = 'none';
+    if (historyBtn) historyBtn.style.display = 'none';
+}
+
+function showRegister() {
+    const modal = document.getElementById('registerModal');
+    if (modal) modal.classList.add('active');
+}
+
+function closeRegisterModal() {
+    const modal = document.getElementById('registerModal');
+    if (modal) modal.classList.remove('active');
+}
+
+function showHome() {
+    hideAllSections();
+    if (homeSection) homeSection.classList.add('active');
+    if (logoutBtn) logoutBtn.style.display = 'inline-block';
+    if (startBtn) startBtn.style.display = 'inline-block';
+    if (historyBtn) historyBtn.style.display = 'inline-block';
+    if (currentUser) {
+        const nameDisplay = document.getElementById('user-name-display');
+        if (nameDisplay) nameDisplay.textContent = `${currentUser.nombre} ${currentUser.apellido_paterno}`;
+    }
+}
+
+function showHistory() {
+    hideAllSections();
+    if (historySection) historySection.classList.add('active');
+    loadHistory();
+}
+
+function hideAllSections() {
+    if (loginSection) loginSection.classList.remove('active');
+    if (homeSection) homeSection.classList.remove('active');
+    if (quizSection) quizSection.classList.remove('active');
+    if (historySection) historySection.classList.remove('active');
+}
+
+function showQuestions(index) {
+    const questionText = document.querySelector('.question-text');
+    if (questionText && questions[index]) {
+        questionText.textContent = `${questions[index].numb}. ${questions[index].question}`;
+        let optionTag = `<div class="option"><span>${questions[index].options[0]}</span></div>
+            <div class="option"><span>${questions[index].options[1]}</span></div>
+            <div class="option"><span>${questions[index].options[2]}</span></div>
+            <div class="option"><span>${questions[index].options[3]}</span></div>`;
+        if (optionList) {
+            optionList.innerHTML = optionTag;
+            const option = document.querySelectorAll('.option');
+            for (let i = 0; i < option.length; i++) {
+                option[i].setAttribute('onclick', 'optionSelected(this)');
+            }
+        }
+    }
+}
+
+// Make optionSelected global so it can be called from HTML onclick
+window.optionSelected = function(answer) {
+    let userAnswer = answer.textContent;
+    let correctAnswer = questions[questionCount].answer;
+    let allOptions = optionList.children.length;
+    if (userAnswer == correctAnswer) {
+        answer.classList.add('correct');
+        userScore += 1;
+        headerScore();
+    } else {
+        answer.classList.add('incorrect');
+        for (let i = 0; i < allOptions; i++) {
+            if (optionList.children[i].textContent == correctAnswer) {
+                optionList.children[i].setAttribute('class', 'option correct');
+            }
+        }
+    }
+    for (let i = 0; i < allOptions; i++) {
+        optionList.children[i].classList.add('disabled');
+    }
+    nextBtn.classList.add('active');
+};
+
+function questionCounter(index) {
+    const questionTotal = document.querySelector('.question-total');
+    if (questionTotal) questionTotal.textContent = `${index} of ${questions.length} Questions`;
+}
+
+function headerScore() {
+    const headerScoreText = document.querySelector('.header-score');
+    if (headerScoreText) headerScoreText.textContent = `Score: ${userScore} / ${questions.length}`;
+}
+
+async function showResultBox() {
+    if (quizBox) quizBox.classList.remove('active');
+    if (resultBox) resultBox.classList.add('active');
+    const scoreText = document.querySelector('.score-text');
+    if (scoreText) scoreText.textContent = `Your Score is ${userScore} out of ${questions.length}`;
+    const circularProgress = document.querySelector('.circular-progress');
+    const progressValue = document.querySelector('.progress-value');
+    
+    if (circularProgress && progressValue) {
+        let progressStartValue = -1;
+        let progressEndValue = (userScore / questions.length) * 100;
+        let speed = 20;
+        let progress = setInterval(() => {
+            progressStartValue++;
+            progressValue.textContent = `${progressStartValue}%`;
+            circularProgress.style.background = `conic-gradient(#0099ff ${progressStartValue * 3.6}deg, rgba(255, 255, 255, .1) 0deg)`;
+            if (progressStartValue == progressEndValue) {
+                clearInterval(progress);
+            }
+        }, speed);
+    }
+
+    if (currentUser) {
+        try {
+            await fetch(`${API_URL}/score`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: currentUser.id,
+                    score: userScore,
+                    total_questions: questions.length
+                })
+            });
+        } catch (error) {
+            console.error('Error saving score:', error);
+        }
+    }
+}
+
+async function loadHistory() {
+    if (!currentUser) return;
+    try {
+        const response = await fetch(`${API_URL}/history/${currentUser.id}`);
+        const data = await response.json();
+        const historyList = document.querySelector('.history-list');
+        if (historyList) {
+            if (data.history && data.history.length > 0) {
+                historyList.innerHTML = data.history.map(item => `
+                    <div class="history-item">
+                        <p class="score">Score: ${item.score} / ${item.total_questions}</p>
+                        <p class="date">Date: ${new Date(item.date).toLocaleString()}</p>
+                        <p>Percentage: ${Math.round((item.score / item.total_questions) * 100)}%</p>
+                    </div>
+                `).join('');
+            } else {
+                historyList.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.7);">No quiz history yet. Take your first quiz!</p>';
+            }
+        }
+    } catch (error) {
+        console.error('Error loading history:', error);
+        const historyList = document.querySelector('.history-list');
+        if (historyList) historyList.innerHTML = '<p style="text-align: center; color: #a60045;">Error loading history</p>';
+    }
+}

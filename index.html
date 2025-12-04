@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>SD América Quiz Site</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+
+    <body>
+        <main class="main">
+            <header class="header">
+                <a href="#" class="logo">SD América</a>
+                <nav class="navbar">
+                    <a href="https://delivery.kyndryl.net/" class="active">Kyndryl Bridge</a>
+                    <a
+                        href="https://docs.google.com/spreadsheets/d/17roeUw11NM_xPxH5iB66tGAjT6-E2z08/edit?gid=1744169997#gid=1744169997">Servicios
+                        Críticos Locales LATAM (CIB)</a>
+                    <a href="https://kyndryl.percipio.com/">Percipio</a>
+                    <a href="https://www.credly.com/users/sign_in">Credly (Medallas)</a>
+                </nav>
+            </header>
+            <div class="container">
+                <!-- Login Section - Always visible on main page -->
+                <section class="login-section active">
+                    <div class="login-box">
+
+                        <form id="loginForm">
+                            <h2>Login</h2>
+                            <div class="input-box">
+                                <span class="icon"><ion-icon name="mail"></ion-icon></span>
+                                <input type="email" id="loginEmail" required>
+                                <label>Email</label>
+                            </div>
+                            <div class="input-box">
+                                <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+                                <input type="password" id="loginPassword" required>
+                                <label>Password</label>
+                            </div>
+                            <button type="submit" class="btn">Login</button>
+                            <div class="login-register">
+                                <p>Don't have an account? <a href="#" class="register-link">Register</a></p>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Quiz Section -->
+                <section class="quiz-section">
+                    <div class="quiz-box">
+                        <h1>SD América Quiz</h1>
+                        <div class="quiz-header">
+                            <span>Good luck !!! Keep learning</span>
+                            <span class="header-score">Score: 0 / 5</span>
+                        </div>
+                        <h2 class="question-text">What does HTML stand for ?</h2>
+                        <div class="option-list"></div>
+                        <div class="quiz-footer">
+                            <span class="question-total">1 of 5 Questions</span>
+                            <button class="next-btn">Next</button>
+                        </div>
+                    </div>
+                    <div class="result-box">
+                        <h2>Quiz Result!</h2>
+                        <div class="percentage-container">
+                            <div class="circular-progress">
+                                <span class="progress-value">0%</span>
+                            </div>
+                            <span class="score-text">Your Score 0 out of 5</span>
+                        </div>
+                        <div class="buttons">
+                            <button class="tryAgain-btn">Retry</button>
+                            <button class="view-history-btn">View History</button>
+                            <button class="goHome-btn">Go To Home</button>
+                        </div>
+                    </div>
+            </div>
+            </section>
+            <section class="home">
+                <div class="home-content">
+                    <h1 class="logo2">Quiz Website</h1>
+                    <p>Welcome, <span id="user-name-display">User</span>!</p>
+                    <button class="start-btn" style="display: none;">Start Quiz</button>
+                    <button class="history-btn" style="display: none;">View History</button>
+                    <button class="btnLogout-popup" style="display: none;">Logout</button>
+                </div>
+            </section>
+            <section class="history-section">
+                <div class="history-box">
+                    <h2>Quiz History</h2>
+                    <div class="history-list"></div>
+                    <button class="back-home-btn">Back to Home</button>
+                </div>
+            </section>
+            </div>
+        </main>
+
+        <!-- Registration Modal -->
+        <div class="modal-overlay" id="registerModal">
+            <div class="modal-content">
+                <button class="modal-close" id="closeModal">&times;</button>
+                <h2>Registration</h2>
+                <form id="registerForm">
+                    <div class="input-group">
+                        <div class="input-box">
+                            <span class="icon"><ion-icon name="person"></ion-icon></span>
+                            <input type="text" id="regNombre" required>
+                            <label>Nombre</label>
+                        </div>
+                        <div class="input-box">
+                            <span class="icon"><ion-icon name="person"></ion-icon></span>
+                            <input type="text" id="regApellidoP" required>
+                            <label>Apellido Paterno</label>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-box">
+                            <span class="icon"><ion-icon name="person"></ion-icon></span>
+                            <input type="text" id="regApellidoM" required>
+                            <label>Apellido Materno</label>
+                        </div>
+                        <div class="input-box">
+                            <span class="icon"><ion-icon name="mail"></ion-icon></span>
+                            <input type="email" id="regEmail" required>
+                            <label>Email</label>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-box">
+                            <span class="icon"><ion-icon name="business"></ion-icon></span>
+                            <input type="text" id="regEmpresa" required>
+                            <label>Empresa</label>
+                        </div>
+                        <div class="input-box">
+                            <span class="icon"><ion-icon name="briefcase"></ion-icon></span>
+                            <input type="text" id="regPuesto" required>
+                            <label>Puesto</label>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-box">
+                            <span class="icon"><ion-icon name="call"></ion-icon></span>
+                            <input type="text" id="regTelefono" required>
+                            <label>Teléfono/WhatsApp</label>
+                        </div>
+                        <div class="input-box">
+                            <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+                            <input type="password" id="regPassword" required>
+                            <label>Password</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">Register</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="popup-info">
+            <h2>Quiz Guide</h2>
+            <span class="info">1. Gestion de Incidencias en Helix</span><br>
+            <span class="info">2. Gestion de Incidencias en Helix</span><br>
+            <span class="info">3. Gestion de Incidencias en Helix</span><br>
+            <span class="info">4. Gestion de Incidencias en Helix</span><br>
+            <span class="info">5. Gestion de Incidencias en Helix</span><br>
+            <div class="btn-group">
+                <button class="info-btn exit-btn">Exit Quiz</button>
+                <a href="#" class="info-btn continue-btn">Continue</a>
+            </div>
+        </div>
+        <div class="footer">A design by Jorge Armando Sanchez Salas</div>
+        <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+        <script src="questions.js"></script>
+        <script src="script.js"></script>
+    </body>
+
+</html>

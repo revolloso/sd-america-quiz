@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Database (will be created automatically on the server)
+basededatos.db
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment variables (if you add them later)
+.env
