@@ -1,3 +1,16 @@
+/*A website designed by JORGE ARMANDO SANCHEZ SALAS.*/
+let currentUser = null;
+let questionCount = 0;
+let questionNumb = 1;
+let userScore = 0;
+// Use relative path for production compatibility. 
+// The browser will automatically resolve this to the current domain + /api
+const API_URL = '/api';
+
+// Define variables globally but initialize them inside DOMContentLoaded
+let loginSection, homeSection, quizSection, historySection;
+let startBtn, historyBtn, popupInfo, exitBtn, main, continueBtn;
+let quizBox, resultBox, tryAgainBtn, goHomeBtn, nextBtn, optionList;
 let logoutBtn, backHomeBtn, registerLink, loginForm, registerForm;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -98,6 +111,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 puesto: document.getElementById('regPuesto').value,
                 telefono: document.getElementById('regTelefono').value
             };
+            try {
+                const response = await fetch(`${API_URL}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData)
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    // Auto-login after successful registration
+                    currentUser = data.user;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    closeRegisterModal();
+                    registerForm.reset();
+                    showHome();
+                } else {
+                    alert(data.error || 'Registration failed');
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                alert('Error connecting to server');
+            }
         });
     }
 
