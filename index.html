@@ -42,6 +42,7 @@
                             <button type="submit" class="btn">Login</button>
                             <div class="login-register">
                                 <p>Don't have an account? <a href="#" class="register-link">Register</a></p>
+                                <p><a href="#" class="forgot-password-link">¿Olvidaste tu contraseña?</a></p>
                             </div>
                         </form>
                     </div>
@@ -146,12 +147,45 @@
                             <label>Teléfono/WhatsApp</label>
                         </div>
                         <div class="input-box">
+                            <span class="icon"><ion-icon name="help-circle"></ion-icon></span>
+                            <input type="text" id="regSecurityQuestion" required>
+                            <label>Pregunta de Seguridad: ¿Cuál es tu empresa?</label>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-box">
                             <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
                             <input type="password" id="regPassword" required>
                             <label>Password</label>
                         </div>
                     </div>
                     <button type="submit" class="btn">Register</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Forgot Password Modal -->
+        <div class="modal-overlay" id="forgotPasswordModal">
+            <div class="modal-content">
+                <button class="modal-close" id="closeForgotModal">&times;</button>
+                <h2>Recuperar Contraseña</h2>
+                <form id="forgotPasswordForm">
+                    <div class="input-box">
+                        <span class="icon"><ion-icon name="mail"></ion-icon></span>
+                        <input type="email" id="forgotEmail" required>
+                        <label>Email</label>
+                    </div>
+                    <div class="input-box">
+                        <span class="icon"><ion-icon name="help-circle"></ion-icon></span>
+                        <input type="text" id="forgotSecurityAnswer" required>
+                        <label>¿Cuál es tu empresa?</label>
+                    </div>
+                    <button type="submit" class="btn">Recuperar Contraseña</button>
+                    <div id="recoveredPassword"
+                        style="display: none; margin-top: 20px; padding: 15px; background: rgba(0,255,0,0.1); border-radius: 6px; text-align: center;">
+                        <p style="color: #00ff00; font-weight: bold;">Tu contraseña es:</p>
+                        <p id="passwordDisplay" style="color: #fff; font-size: 20px; font-weight: bold;"></p>
+                    </div>
                 </form>
             </div>
         </div>

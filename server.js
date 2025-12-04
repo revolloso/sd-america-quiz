@@ -14,12 +14,12 @@ app.use(express.static(path.join(__dirname, '.')));
 
 // Register
 app.post('/api/register', async (req, res) => {
-    const { email, password, nombre, apellido_paterno, apellido_materno, empresa, puesto, telefono } = req.body;
+    const { email, password, nombre, apellido_paterno, apellido_materno, empresa, puesto, telefono, security_question } = req.body;
     
     try {
         const { data, error } = await supabase
             .from('users')
-            .insert([{ email, password, nombre, apellido_paterno, apellido_materno, empresa, puesto, telefono }])
+            .insert([{ email, password, nombre, apellido_paterno, apellido_materno, empresa, puesto, telefono, security_question }])
             .select('id, email, nombre, apellido_paterno, apellido_materno')
             .single();
         
@@ -100,6 +100,38 @@ app.get('/api/history/:userId', async (req, res) => {
         res.status(400).json({ error: err.message });
     }
 });
+
+// Forgot Password - Recover password using security question
+app.post('/api/forgot-password', async (req, res) => {
+    const { email, security_answer } = req.body;
+    
+    try {
+        const { data, error } = await supabase
+            .from('users')
+            .select('password')
+            .eq('email', email)
+            .eq('security_question', security_answer)
+            .single();
+        
+        if (error) throw error;
+        
+        if (data) {
+            res.json({ 
+                message: 'Password recovered successfully', 
+                password: data.password
+            });
+        } else {
+            res.status(404).json({ error: 'Email o respuesta de seguridad incorrectos' });
+        }
+    } catch (err) {
+        if (err.code === 'PGRST116') {
+            res.status(404).json({ error: 'Email o respuesta de seguridad incorrectos' });
+        } else {
+            res.status(400).json({ error: err.message });
+        }
+    }
+});
+
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);

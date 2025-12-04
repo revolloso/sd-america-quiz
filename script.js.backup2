@@ -12,7 +12,6 @@ let loginSection, homeSection, quizSection, historySection;
 let startBtn, historyBtn, popupInfo, exitBtn, main, continueBtn;
 let quizBox, resultBox, tryAgainBtn, goHomeBtn, nextBtn, optionList;
 let logoutBtn, backHomeBtn, registerLink, loginForm, registerForm;
-let forgotPasswordLink, forgotPasswordForm;
 
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize DOM elements
@@ -37,8 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
     registerLink = document.querySelector('.register-link');
     loginForm = document.getElementById('loginForm');
     registerForm = document.getElementById('registerForm');
-    forgotPasswordLink = document.querySelector('.forgot-password-link');
-    forgotPasswordForm = document.getElementById('forgotPasswordForm');
 
     // Check user session
     const user = localStorage.getItem('currentUser');
@@ -48,95 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         showLogin();
     }
-
-    // Event Listeners
-    if (registerLink) {
-        registerLink.onclick = (e) => { e.preventDefault(); showRegister(); };
-    }
-
-    if (forgotPasswordLink) {
-        forgotPasswordLink.onclick = (e) => { e.preventDefault(); showForgotPassword(); };
-    }
-
-    const closeModalBtn = document.getElementById('closeModal');
-    if (closeModalBtn) {
-        closeModalBtn.onclick = closeRegisterModal;
-    }
-
-    const closeForgotModalBtn = document.getElementById('closeForgotModal');
-    if (closeForgotModalBtn) {
-        closeForgotModalBtn.onclick = closeForgotPasswordModal;
-    }
-
-    const modal = document.getElementById('registerModal');
-    if (modal) {
-        modal.onclick = (e) => {
-            if (e.target === modal) {
-                closeRegisterModal();
-            }
-        };
-    }
-
-    const forgotModal = document.getElementById('forgotPasswordModal');
-    if (forgotModal) {
-        forgotModal.onclick = (e) => {
-            if (e.target === forgotModal) {
-                closeForgotPasswordModal();
-            }
-        };
-    }
-
-    if (loginForm) {
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            console.log('Login form submitted');
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            console.log('Attempting login with:', email);
-
-            try {
-                const response = await fetch(`${API_URL}/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                });
-
-                const data = await response.json();
-                console.log('Login response:', data);
-
-                if (response.ok) {
-                    currentUser = data.user;
-                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                    showHome();
-                    loginForm.reset();
-                } else {
-                    alert(data.message || 'Login failed');
-                }
-            } catch (error) {
-                console.error('Login error:', error);
-                alert('Error connecting to server');
-            }
-        });
-    }
-
-    if (registerForm) {
-        registerForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const userData = {
-                email: document.getElementById('regEmail').value,
-                password: document.getElementById('regPassword').value,
-                nombre: document.getElementById('regNombre').value,
-                apellido_paterno: document.getElementById('regApellidoP').value,
-                apellido_materno: document.getElementById('regApellidoM').value,
-                empresa: document.getElementById('regEmpresa').value,
-                puesto: document.getElementById('regPuesto').value,
-                telefono: document.getElementById('regTelefono').value,
-                security_question: document.getElementById('regSecurityQuestion').value
-            };
-            try {
-                const response = await fetch(`${API_URL}/register`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(userData)
                 });
                 const data = await response.json();
@@ -152,34 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch (error) {
                 console.error('Registration error:', error);
-                alert('Error connecting to server');
-            }
-        });
-    }
-
-    if (forgotPasswordForm) {
-        forgotPasswordForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('forgotEmail').value;
-            const securityAnswer = document.getElementById('forgotSecurityAnswer').value;
-
-            try {
-                const response = await fetch(`${API_URL}/forgot-password`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, security_answer: securityAnswer })
-                });
-                const data = await response.json();
-                
-                if (response.ok) {
-                    // Show the password
-                    document.getElementById('passwordDisplay').textContent = data.password;
-                    document.getElementById('recoveredPassword').style.display = 'block';
-                } else {
-                    alert(data.error || 'No se pudo recuperar la contraseña');
-                }
-            } catch (error) {
-                console.error('Forgot password error:', error);
                 alert('Error connecting to server');
             }
         });
@@ -298,21 +178,6 @@ function showRegister() {
 
 function closeRegisterModal() {
     const modal = document.getElementById('registerModal');
-    if (modal) modal.classList.remove('active');
-}
-
-function showForgotPassword() {
-    const modal = document.getElementById('forgotPasswordModal');
-    if (modal) {
-        modal.classList.add('active');
-        // Reset the form and hide the password display
-        if (forgotPasswordForm) forgotPasswordForm.reset();
-        document.getElementById('recoveredPassword').style.display = 'none';
-    }
-}
-
-function closeForgotPasswordModal() {
-    const modal = document.getElementById('forgotPasswordModal');
     if (modal) modal.classList.remove('active');
 }
 
