@@ -39,11 +39,23 @@ El servidor se iniciará en `http://localhost:3000`
 
 La aplicación usa **Supabase** (PostgreSQL en la nube). 
 
+### Opción A: Usar la Base de Datos Compartida (Recomendado para colaboración)
 - ✅ **No necesitas instalar ninguna base de datos local**
 - ✅ **Todos los desarrolladores comparten la misma base de datos**
 - ✅ **Las tablas ya están creadas y configuradas**
+- ✅ **Las credenciales ya están en el archivo `.env` de ejemplo**
 
-Si necesitas ver o modificar la base de datos:
+### Opción B: Crear Tu Propia Base de Datos (Para desarrollo independiente)
+Si prefieres tener tu propia base de datos separada:
+- 📖 **Lee el archivo [`DATABASE_SETUP.md`](DATABASE_SETUP.md)** para instrucciones completas
+- Crearás tu propio proyecto en Supabase
+- Tendrás control total de tus datos
+- No afectarás a otros desarrolladores
+
+---
+
+### Acceso a Supabase (Base de Datos Compartida)
+Si necesitas ver o modificar la base de datos compartida:
 1. Ve a [supabase.com](https://supabase.com)
 2. Inicia sesión con la cuenta del proyecto
 3. Ve al **SQL Editor** o **Table Editor**
